@@ -21,18 +21,6 @@ function LoginPage({ onLogin }) {
     }
   };
 
-  // const handleLogin = async () => {
-  //   try {
-  //     const loggedInPlayer = await loginPlayer(email);
-  //     onLogin(loggedInPlayer);  // Pass the logged-in player to App.js
-  //     setError(null);
-  //     navigate('/dashboard');  // Navigate to the dashboard after successful login
-  //   } catch (error) {
-  //     setError('Login failed. Please try again.');
-  //     console.error('Error during login:', error);
-  //   }
-  // };
-
   return (
     <div className="form-container">
       <h2>Login</h2>
