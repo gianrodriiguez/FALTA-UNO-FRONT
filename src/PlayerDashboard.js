@@ -49,32 +49,3 @@ function PlayerDashboard({ player }) {
 }
 
 export default PlayerDashboard;
-
-
-// import React from 'react';
-// import CreateMatch from './createMatch';  // Import CreateMatch component
-
-// function PlayerDashboard({ player }) {
-//   return (
-//     <div>
-//       <h1>Welcome, {player.name}</h1>
-//       <p>Email: {player.email}</p>
-
-//       <h2>Your Teams</h2>
-//       {/* Render teams if available (you can adjust this based on your data structure) */}
-//       <ul>
-//         {/* Replace with actual team data */}
-//         <li>Team 1</li>
-//         <li>Team 2</li>
-//       </ul>
-
-//       {/* Render the CreateMatch component directly here */}
-//       <h2>Create a New Match</h2>
-//       <CreateMatch />  {/* CreateMatch component is rendered inside the dashboard */}
-//     </div>
-//   );
-// }
-
-// export default PlayerDashboard;
-
-

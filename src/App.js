@@ -50,6 +50,9 @@ function App() {
 
           {/* Dashboard Page (shown after login/register) */}
           <Route path="/dashboard" element={player ? <PlayerDashboard player={player} /> : <Navigate to="/login" />} />
+
+          {/* Create Match Page */}
+          <Route path="/create-match" element={<CreateMatch />} />
         </Routes>
       </div>
     </Router>
@@ -57,4 +60,3 @@ function App() {
 }
 
 export default App;
-

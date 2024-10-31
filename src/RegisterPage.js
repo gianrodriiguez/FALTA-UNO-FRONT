@@ -16,10 +16,16 @@ function RegisterPage({ onRegister }) {
       setError(null);
       navigate('/dashboard');  // Navigate to the dashboard after successful registration
     } catch (error) {
-      setError('Registration failed. Please try again.');
+      // Check the error message for specific messages thrown by registerPlayer
+      if (error.message === 'Player already exists') {
+        setError('Player already exists. Please try a different email.');
+      } else {
+        setError('Registration failed. Please try again.');
+      }
       console.error('Error during registration:', error);
     }
-  };
+  };  
+
 
   return (
     <div className="form-container">

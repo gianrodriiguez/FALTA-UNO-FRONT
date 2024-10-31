@@ -1,12 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const CreateMatch = () => {
+  const [teams, setTeams] = useState([]);
   const [team1, setTeam1] = useState('');
   const [team2, setTeam2] = useState('');
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+
+  // Fetch teams when component mounts
+  useEffect(() => {
+    const fetchTeams = async () => {
+      try {
+        const response = await axios.get('http://localhost:3002/teams');
+        setTeams(response.data);
+      } catch (error) {
+        console.error('Error fetching teams:', error);
+        setError('Failed to load teams. Please try again later.');
+      }
+    };
+
+    fetchTeams();
+  }, []);
 
   const createMatch = async () => {
     if (!team1 || !team2 || !date || !time) {
@@ -14,16 +31,27 @@ const CreateMatch = () => {
       return;
     }
 
+    if (team1 === team2) {
+      setError('Team 1 and Team 2 cannot be the same.');
+      return;
+    }
+
     try {
       const response = await axios.post('http://localhost:3003/create-match', {
-        teams: [team1, team2],  // Array of teams
+        teams: [team1, team2], // Array of team IDs
         date,
-        time
+        time,
       });
-      console.log(response.data);
-      setError('');  // Clear any previous errors
+      console.log('Match created:', response.data);
+      setError(''); // Clear any previous errors
+      setSuccessMessage('Match created successfully!');
+      // Optionally, reset the form fields
+      setTeam1('');
+      setTeam2('');
+      setDate('');
+      setTime('');
     } catch (error) {
-      console.error(error);
+      console.error('Error creating match:', error);
       setError('Failed to create match.');
     }
   };
@@ -32,25 +60,30 @@ const CreateMatch = () => {
     <div>
       <h2>Create a Match</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
+      {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
 
       <div>
         <label>Team 1</label>
-        <input
-          type="text"
-          value={team1}
-          onChange={(e) => setTeam1(e.target.value)}
-          placeholder="Enter team 1 name"
-        />
+        <select value={team1} onChange={(e) => setTeam1(e.target.value)}>
+          <option value="">Select Team 1</option>
+          {teams.map((team) => (
+            <option key={team._id} value={team._id}>
+              {team.team_name}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div>
         <label>Team 2</label>
-        <input
-          type="text"
-          value={team2}
-          onChange={(e) => setTeam2(e.target.value)}
-          placeholder="Enter team 2 name"
-        />
+        <select value={team2} onChange={(e) => setTeam2(e.target.value)}>
+          <option value="">Select Team 2</option>
+          {teams.map((team) => (
+            <option key={team._id} value={team._id}>
+              {team.team_name}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div>
