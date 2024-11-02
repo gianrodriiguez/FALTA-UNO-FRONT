@@ -5,13 +5,14 @@ import axios from 'axios';
 function PlayerDashboard({ player }) {
   const [teams, setTeams] = useState([]);
   const [error, setError] = useState(null);
+  const [matches, setMatches] = useState([]);
+
 
 useEffect(() => {
   const fetchTeams = async () => {
     try {
-      console.log('Fetching teams for player ID:', player._id);
-      const response = await axios.get(`http://localhost:3002/teams/player/${player._id}`);
-      // const response = await axios.get(`http://team-service:3002/teams/player/${player._id}`);
+      console.log('Fetching teams for player ID:', player.email);
+      const response = await axios.get(`http://localhost:3002/teams/player/${player.email}`);
       console.log('Teams fetched successfully:', response.data);
       setTeams(response.data);
     } catch (err) {
@@ -23,9 +24,40 @@ useEffect(() => {
   if (player && player._id) {
     fetchTeams();
   } else {
-    console.log('No player ID found');
+    console.log('No player email found');
   }
 }, [player]);
+
+useEffect(() => {
+  const fetchAllMatches = async () => {
+    try {
+      const allMatches = await Promise.all(
+        teams.map((team) => fetchMatches(team.name))
+      );
+      setMatches(allMatches.flat()); // Flatten the results if needed
+    } catch (err) {
+      console.error('Error fetching matches:', err);
+      setError('Could not fetch matches.');
+    }
+  };
+
+  if (teams.length > 0) {
+    fetchAllMatches();
+  }
+}, [teams]);
+
+
+const fetchMatches = async (teamName) => {
+  try {
+    const response = await axios.get(`http://localhost:3002/matches/team/${teamName}`);
+    console.log('Matches fetched successfully:', response.data);
+    setMatches(response.data); // Set matches to state or however you manage matches data
+  } catch (err) {
+    console.error('Error fetching matches:', err);
+    setError('Could not fetch matches.');
+  }
+};
+
 
 
   return (
