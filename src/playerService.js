@@ -3,7 +3,6 @@ import axios from 'axios';
 const BASE_URL = 'http://localhost:3001';  // Make sure this points to your backend
 
 // Function to register a new player
-// Function to register a new player
 export const registerPlayer = async (name, email) => {
     try {
         const response = await axios.post(`${BASE_URL}/register`, { name, email });

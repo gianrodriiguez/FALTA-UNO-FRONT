@@ -6,21 +6,27 @@ function PlayerDashboard({ player }) {
   const [teams, setTeams] = useState([]);
   const [error, setError] = useState(null);
 
-  // Fetch teams when the component mounts
-  useEffect(() => {
-    const fetchTeams = async () => {
-      try {
-        // Assuming the endpoint is something like `/teams/player/:playerId`
-        const response = await axios.get(`http://localhost:3002/teams/player/${player._id}`);
-        setTeams(response.data);
-      } catch (err) {
-        console.error('Error fetching teams:', err);
-        setError('Could not fetch teams.');
-      }
-    };
+useEffect(() => {
+  const fetchTeams = async () => {
+    try {
+      console.log('Fetching teams for player ID:', player._id);
+      const response = await axios.get(`http://localhost:3002/teams/player/${player._id}`);
+      // const response = await axios.get(`http://team-service:3002/teams/player/${player._id}`);
+      console.log('Teams fetched successfully:', response.data);
+      setTeams(response.data);
+    } catch (err) {
+      console.error('Error fetching teams:', err);
+      setError('Could not fetch teams.');
+    }
+  };
 
+  if (player && player._id) {
     fetchTeams();
-  }, [player._id]); // Runs the effect when player._id changes
+  } else {
+    console.log('No player ID found');
+  }
+}, [player]);
+
 
   return (
     <div>

@@ -26,7 +26,6 @@ function RegisterPage({ onRegister }) {
     }
   };  
 
-
   return (
     <div className="form-container">
       <h2>Register</h2>
