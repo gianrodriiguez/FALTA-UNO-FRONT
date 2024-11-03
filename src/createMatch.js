@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const CreateMatch = () => {
+const CreateMatch = ({ player }) => {
   const [teams, setTeams] = useState([]);
   const [team1, setTeam1] = useState('');
   const [team2, setTeam2] = useState('');
@@ -38,14 +38,14 @@ const CreateMatch = () => {
 
     try {
       const response = await axios.post('http://localhost:3003/create-match', {
-        teams: [team1, team2], // Array of team IDs
+        teams: [team1, team2],
         date,
         time,
+        createdBy: player ? player.email : 'unknown',  // Include player email as match creator
       });
       console.log('Match created:', response.data);
       setError(''); // Clear any previous errors
       setSuccessMessage('Match created successfully!');
-      // Optionally, reset the form fields
       setTeam1('');
       setTeam2('');
       setDate('');
@@ -67,7 +67,7 @@ const CreateMatch = () => {
         <select value={team1} onChange={(e) => setTeam1(e.target.value)}>
           <option value="">Select Team 1</option>
           {teams.map((team) => (
-            <option key={team._id} value={team._id}>
+            <option key={team.team_name} value={team.team_name}>
               {team.team_name}
             </option>
           ))}
@@ -79,7 +79,7 @@ const CreateMatch = () => {
         <select value={team2} onChange={(e) => setTeam2(e.target.value)}>
           <option value="">Select Team 2</option>
           {teams.map((team) => (
-            <option key={team._id} value={team._id}>
+            <option key={team.team_name} value={team.team_name}>
               {team.team_name}
             </option>
           ))}

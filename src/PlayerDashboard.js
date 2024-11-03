@@ -1,65 +1,74 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
-function PlayerDashboard({ player }) {
+const PlayerDashboard = ({ player }) => {
   const [teams, setTeams] = useState([]);
-  const [error, setError] = useState(null);
   const [matches, setMatches] = useState([]);
+  const [error, setError] = useState(null);
 
+  // Check if player is undefined and render a message or redirect if necessary
+  if (!player) {
+    return <p>Loading player information...</p>;
+  }
 
-useEffect(() => {
-  const fetchTeams = async () => {
+  // Fetch teams based on player email
+  useEffect(() => {
+    const fetchTeams = async () => {
+      try {
+        console.log('Fetching teams for player email:', player.email);
+        const response = await axios.get(`http://localhost:3002/teams/player/${player.email}`);
+        console.log('Teams fetched successfully:', response.data);
+        setTeams(response.data);
+      } catch (err) {
+        console.error('Error fetching teams:', err);
+        setError('Could not fetch teams.');
+      }
+    };
+
+    if (player && player.email) {
+      fetchTeams();
+    } else {
+      console.log('No player email found');
+    }
+  }, [player]);
+
+  // Function to fetch matches for a given team name
+  const fetchMatches = async (teamName) => {
+    console.log('Fetching matches for team:', teamName);
     try {
-      console.log('Fetching teams for player ID:', player.email);
-      const response = await axios.get(`http://localhost:3002/teams/player/${player.email}`);
-      console.log('Teams fetched successfully:', response.data);
-      setTeams(response.data);
+      const response = await axios.get(`http://localhost:3003/matches/team/${teamName}`);
+      console.log('Matches fetched successfully for team', teamName, ':', response.data);
+      return response.data; // Return the fetched matches data
     } catch (err) {
-      console.error('Error fetching teams:', err);
-      setError('Could not fetch teams.');
+      console.error('Error fetching matches for team', teamName, ':', err);
+      setError(`Could not fetch matches for ${teamName}.`);
+      return []; // Return an empty array on error
     }
   };
 
-  if (player && player._id) {
-    fetchTeams();
-  } else {
-    console.log('No player email found');
-  }
-}, [player]);
+  // Fetch matches based on each team
+  useEffect(() => {
+    const fetchAllMatches = async () => {
+      try {
+        const allMatches = await Promise.all(
+          teams.map((team) => fetchMatches(team.team_name))
+        );
+        console.log('All matches fetched before flattening:', allMatches);
+        setMatches(allMatches.flat()); // Flatten the array of arrays
+      } catch (err) {
+        console.error('Error fetching matches:', err);
+        setError('Could not fetch matches.');
+      }
+    };
 
-useEffect(() => {
-  const fetchAllMatches = async () => {
-    try {
-      const allMatches = await Promise.all(
-        teams.map((team) => fetchMatches(team.name))
-      );
-      setMatches(allMatches.flat()); // Flatten the results if needed
-    } catch (err) {
-      console.error('Error fetching matches:', err);
-      setError('Could not fetch matches.');
+    if (teams.length > 0) {
+      console.log('Teams to fetch matches for:', teams);
+      fetchAllMatches();
     }
-  };
+  }, [teams]);
 
-  if (teams.length > 0) {
-    fetchAllMatches();
-  }
-}, [teams]);
-
-
-const fetchMatches = async (teamName) => {
-  try {
-    const response = await axios.get(`http://localhost:3002/matches/team/${teamName}`);
-    console.log('Matches fetched successfully:', response.data);
-    setMatches(response.data); // Set matches to state or however you manage matches data
-  } catch (err) {
-    console.error('Error fetching matches:', err);
-    setError('Could not fetch matches.');
-  }
-};
-
-
-
+  // Render the dashboard with teams and matches
   return (
     <div>
       <h1>Welcome, {player.name}</h1>
@@ -82,8 +91,26 @@ const fetchMatches = async (teamName) => {
       <Link to="/create-match">
         <button>Create a New Match</button>
       </Link>
+
+      {/* Matches Section */}
+      <h2>Your Matches</h2>
+      {matches.length > 0 ? (
+        <ul>
+          {matches.map((match, index) => (
+            match && (
+              <li key={index}>
+                <p><strong>Teams:</strong> {match.teams.join(' vs ')}</p>
+                <p><strong>Date:</strong> {match.date}</p>
+                <p><strong>Time:</strong> {match.time}</p>
+              </li>
+            )
+          ))}
+        </ul>
+      ) : (
+        <p>No matches available</p>
+      )}
     </div>
   );
-}
+};
 
 export default PlayerDashboard;
