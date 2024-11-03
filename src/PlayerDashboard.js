@@ -32,7 +32,8 @@ const PlayerDashboard = ({ player }) => {
   const fetchMatches = async (teamName) => {
     console.log('Fetching matches for team:', teamName);
     try {
-      const response = await axios.get(`http://localhost:3003/matches/team/${teamName}`);
+      const response = await axios.get(`http://match-service:3003/matches/team/${teamName}`);
+      // const response = await axios.get(`http://localhost:3003/matches/team/${teamName}`);
       console.log('Matches fetched successfully for team', teamName, ':', response.data);
       return response.data; // Return the fetched matches data
     } catch (err) {
