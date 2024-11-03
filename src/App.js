@@ -52,8 +52,8 @@ function App() {
           <Route path="/dashboard" element={player ? <PlayerDashboard player={player} /> : <Navigate to="/login" />} />
 
           {/* Create Match Page */}
-          <Route path="/create-match" element={<CreateMatch />} />
-        </Routes>
+      <Route path="/create-match" element={player ? <CreateMatch player={player} /> : <Navigate to="/login" />} />
+    </Routes>
       </div>
     </Router>
   );

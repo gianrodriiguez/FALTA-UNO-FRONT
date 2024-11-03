@@ -7,11 +7,6 @@ const PlayerDashboard = ({ player }) => {
   const [matches, setMatches] = useState([]);
   const [error, setError] = useState(null);
 
-  // Check if player is undefined and render a message or redirect if necessary
-  if (!player) {
-    return <p>Loading player information...</p>;
-  }
-
   // Fetch teams based on player email
   useEffect(() => {
     const fetchTeams = async () => {
