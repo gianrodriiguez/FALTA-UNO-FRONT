@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import './CreateMatch.css';
 
 const CreateMatch = ({ player }) => {
   const [teams, setTeams] = useState([]);
@@ -57,14 +58,14 @@ const CreateMatch = ({ player }) => {
   };
 
   return (
-    <div>
+    <div className="create-match-container">
       <h2>Create a Match</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
+      {error && <p className="error-message">{error}</p>}
+      {successMessage && <p className="success-message">{successMessage}</p>}
 
-      <div>
+      <div className="form-group">
         <label>Team 1</label>
-        <select value={team1} onChange={(e) => setTeam1(e.target.value)}>
+        <select value={team1} onChange={(e) => setTeam1(e.target.value)} className="form-select">
           <option value="">Select Team 1</option>
           {teams.map((team) => (
             <option key={team.team_name} value={team.team_name}>
@@ -74,9 +75,9 @@ const CreateMatch = ({ player }) => {
         </select>
       </div>
 
-      <div>
+      <div className="form-group">
         <label>Team 2</label>
-        <select value={team2} onChange={(e) => setTeam2(e.target.value)}>
+        <select value={team2} onChange={(e) => setTeam2(e.target.value)} className="form-select">
           <option value="">Select Team 2</option>
           {teams.map((team) => (
             <option key={team.team_name} value={team.team_name}>
@@ -86,25 +87,27 @@ const CreateMatch = ({ player }) => {
         </select>
       </div>
 
-      <div>
+      <div className="form-group">
         <label>Date</label>
         <input
           type="date"
           value={date}
           onChange={(e) => setDate(e.target.value)}
+          className="form-input"
         />
       </div>
 
-      <div>
+      <div className="form-group">
         <label>Time</label>
         <input
           type="time"
           value={time}
           onChange={(e) => setTime(e.target.value)}
+          className="form-input"
         />
       </div>
 
-      <button onClick={createMatch}>Create Match</button>
+      <button onClick={createMatch} className="create-match-button">Create Match</button>
     </div>
   );
 };

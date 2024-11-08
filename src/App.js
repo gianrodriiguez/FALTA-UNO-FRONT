@@ -5,6 +5,7 @@ import RegisterPage from './RegisterPage'; // Correct if RegisterPage is default
 import PlayerDashboard from './PlayerDashboard'; // Correct if PlayerDashboard is default exported
 import CreateMatch from './createMatch';   // Correct if CreateMatch is default exported
 import './App.css';
+import CreateTeam from './CreateTeam';
 
 function App() {
   const [player, setPlayer] = useState(null);  // To store the logged-in or registered player
@@ -53,6 +54,8 @@ function App() {
 
           {/* Create Match Page */}
       <Route path="/create-match" element={player ? <CreateMatch player={player} /> : <Navigate to="/login" />} />
+
+      <Route path="/create-team" element={player ? <CreateTeam player={player} /> : <Navigate to="/login" />} />
     </Routes>
       </div>
     </Router>
