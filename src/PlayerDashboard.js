@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import './PlayerDashboard.css'; // Create a CSS file specifically for this component
+import './PlayerDashboard.css';
 
 const PlayerDashboard = ({ player }) => {
   const [teams, setTeams] = useState([]);
   const [matches, setMatches] = useState([]);
   const [acceptedMatches, setAcceptedMatches] = useState([]); // Track accepted matches
   const [error, setError] = useState(null);
+  const [confirmations, setConfirmations] = useState({}); // Store confirmed player counts
 
   // Fetch teams and matches based on the player's email
   useEffect(() => {
@@ -36,6 +37,32 @@ const PlayerDashboard = ({ player }) => {
     fetchTeams();
     if (teams.length > 0) fetchAllMatches();
   }, [player.email, teams]);
+
+  // Fetch confirmations for each match
+  useEffect(() => {
+    const fetchConfirmations = async () => {
+      try {
+        const confirmationsData = await Promise.all(
+          matches.map((match) =>
+            axios
+              .get(`http://localhost:3004/confirmations/${match._id}`)
+              .then((res) => ({ matchId: match._id, confirmedCount: res.data.confirmedCount, totalCount: res.data.totalCount }))
+          )
+        );
+
+        const confirmationsMap = confirmationsData.reduce((acc, item) => {
+          acc[item.matchId] = `${item.confirmedCount}/${item.totalCount}`;
+          return acc;
+        }, {});
+        setConfirmations(confirmationsMap);
+      } catch (err) {
+        console.error('Error fetching confirmations:', err);
+        setError('Could not fetch player confirmations.');
+      }
+    };
+
+    if (matches.length > 0) fetchConfirmations();
+  }, [matches]);
 
   const confirmMatch = async (matchId) => {
     try {
@@ -68,6 +95,12 @@ const PlayerDashboard = ({ player }) => {
                 <span className="team-name">{match.teams[1]}</span>
                 <span className="match-time">🕒 {match.time}</span>
                 <span className="match-date">📅 {match.date}</span>
+                
+                {/* Display confirmed player count */}
+                <span className="confirm-count">
+                  {confirmations[match._id] || '0/0'}
+                </span>
+
                 {acceptedMatches.includes(match._id) ? (
                   <button className="accepted-button" disabled>
                     Accepted

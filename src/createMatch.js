@@ -37,6 +37,14 @@ const CreateMatch = ({ player }) => {
       return;
     }
 
+    // Check if the selected date and time are in the future
+    const selectedDateTime = new Date(`${date}T${time}`);
+    const currentDateTime = new Date();
+    if (selectedDateTime <= currentDateTime) {
+      setError('The match date and time must be in the future.');
+      return;
+    }
+
     try {
       const response = await axios.post('http://localhost:3003/create-match', {
         teams: [team1, team2],

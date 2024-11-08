@@ -55,7 +55,7 @@ const CreateTeam = () => {
 
       {emails.map((email, index) => (
         <div key={index} className="form-group">
-          <label>Player {index + 1} Email</label>
+          <label>Player {index + 1}</label>
           <input
             type="email"
             value={email}
